@@ -102,17 +102,18 @@
   })();
 
   // ------------------------------------------------------------------
+   // ------------------------------------------------------------------
   // 8. svgEl: SVG element creation
   // ------------------------------------------------------------------
   (function () {
     var svg = U.svgEl('svg', { viewBox: '0 0 100 100', class: 'test-svg' });
     T.assertEqual(svg.localName, 'svg', 'svgEl: tag name');
+    T.assertEqual(svg.getAttribute('viewBox'), '0 0 100 100', 'svgEl: viewBox attr');
+    T.assertEqual(svg.getAttribute('class'), 'test-svg', 'svgEl: class attr');
+
+    var rect = U.svgEl('rect', { x: 10, y: 20, width: 30, height: 40 });
     T.assertEqual(rect.getAttribute('x'), '10', 'svgEl: numeric attr');
     T.assertEqual(rect.getAttribute('height'), '40', 'svgEl: height attr');
-     
-    var rect = U.svgEl('rect', { x: 10, y: 20, width: 30, height: 40 }); 
-    T.assertEqual(rect.getAttribute('x'), 10, 'svgEl: numeric attr');
-    T.assertEqual(rect.getAttribute('height'), 40, 'svgEl: height attr');
   })();
 
   // ------------------------------------------------------------------
