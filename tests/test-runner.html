@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Math Trainer — Characterisation Tests</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: ui-monospace, SF Mono, Consolas, monospace;
+           background: #0b0a10; color: #e8cb8b; margin: 0; padding: 20px; }
+    h1 { text-align: center; color: #e8cb8b; font-size: 1.5rem; margin-bottom: 1rem; }
+    #summary { font-size: 1.25rem; font-weight: bold; text-align: center;
+               margin: 1rem 0; padding: 12px; border: 1px solid #e8cb8b;
+               border-radius: 4px; background: rgba(232,203,139,.1); }
+    #summary.pass { color: #8ee08e; border-color: #8ee08e; }
+    #summary.fail { color: #ff9c8f; border-color: #ff9c8f; }
+    #summary.stuck { color: #ffd166; border-color: #ffd166; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: 6px 8px; border-bottom: 1px solid #2a2530; }
+    th { color: #e8cb8b; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+    tr.pass td { color: #8ee08e; }
+    tr.fail td { color: #ff9c8f; }
+    tr.skip td { color: #ffd166; }
+    tr.stuck td { color: #ffd166; }
+    tr.fail::before { content: '✗ '; color: #ff9c8f; font-weight: bold; }
+    tr.pass::before { content: '✓ '; color: #8ee08e; font-weight: bold; }
+    tr.skip::before { content: '⚠ '; color: #ffd166; font-weight: bold; }
+    tr.stuck::before { content: '⚠ '; color: #ffd166; font-weight: bold; }
+    .suite-box { margin: 1rem 0; padding: 10px; border: 1px solid #2a2530; border-radius: 4px; background: rgba(255,255,255,.03); }
+    .suite-box h2 { margin: 0 0 0.5rem; font-size: 0.95rem; color: #e8cb8b; }
+    .suite-box p { margin: 0; font-size: 0.85rem; color: #8a8396; }
+    .suite-box.stuck { border-color: #ffd166; }
+    .suite-box.fail { border-color: #ff9c8f; }
+    .suite-box.done { border-color: #8ee08e; }
+    .coverage { margin-top: 1rem; font-size: 0.85rem; color: #8a8396; }
+  </style>
+</head>
+<body>
+  <h1>Math Trainer — Characterisation Tests</h1>
+  <p class="muted">These tests document existing behaviour before refactoring.<br>
+  A failure after refactoring = a regression (unless a verified bug was intentionally fixed).</p>
+
+  <div id="summary">Loading tests…</div>
+
+  <div id="suites"></div>
+
+  <div class="coverage" id="coverage"></div>
+
+  <table>
+    <thead><tr><th>Status</th><th>Test</th></tr></thead>
+    <tbody id="results"></tbody>
+  </table>
+
+  <div class="muted" style="margin-top: 1rem;">
+    Open your browser's developer console (F12) for the same output.<br>
+    <strong>Storage isolation:</strong> tests replace window.localStorage with a mock
+    before storage.js loads, so the real Math Trainer progress is never read or modified.<br>
+    <strong>Timeout:</strong> any suite that does not complete within 10 seconds
+    is marked as a failure.<br>
+    <a href="../index.html">← Back to Math Trainer</a>
+  </div>
+
+  <!-- 1. Assertion library -->
+  <script src="assert.js" defer></script>
+  <!-- 2. DOM stubs + isolated storage mock (loads BEFORE storage.js and game.js) -->
+  <script src="test-stub.js" defer></script>
+  <script src="test-dom.js" defer></script>
+  <!-- 3. MathStorage (storage layer) — must load before game.js -->
+  <script src="../storage.js" defer></script>
+  <!-- 4. Test setup — injects mock adapters into MathStorage BEFORE game.js -->
+  <script src="test-setup.js" defer></script>
+  <!-- 5. MathEngine (engine.js) -->
+  <script src="../engine.js" defer></script>
+  <!-- 5b. Run/session state (Phase 4b) — loads before game.js -->
+  <script src="../run-state.js" defer></script>
+  <!-- 5c. XP / scoring / progression (Phase 4c) — loads before game.js -->
+  <script src="../math-xp.js" defer></script>
+  <!-- 5d. UI / DOM helpers (Phase 4d) — loads before game.js -->
+  <script src="../math-ui.js" defer></script>
+  <!-- 5e. Skill analysis and coaching (Phase 4e) — loads before game.js -->
+  <script src="../math-coach.js" defer></script>
+  <!-- 6. MathGame (game.js) -->
+  <script src="../game.js" defer></script>
+  <!-- 6. Test suites -->
+  <script src="test-engine.js" defer></script>
+  <script src="test-game.js" defer></script>
+  <script src="test-gameplay.js" defer></script>
+  <script src="test-storage.js" defer></script>
+  <script src="test-run-state.js" defer></script>
+  <!-- 6c. XP / scoring / progression tests (Phase 4c) -->
+  <script src="test-xp-state.js" defer></script>
+  <!-- 6c. UI / DOM helpers tests (Phase 4d) -->
+  <script src="test-math-ui.js" defer></script>
+  <!-- 6e. Skill analysis and coaching tests (Phase 4e) -->
+  <script src="test-math-coach.js" defer></script>
+  <!-- 7. Reporter (loaded LAST with defer, runs after all suites) -->
+  <script src="test-reporter.js" defer></script>
+</body>
+</html>

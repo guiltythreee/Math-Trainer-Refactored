@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#08070d">
+  <meta name="description" content="Limitless Math Trainer — mental arithmetic from Acolyte to Abyss, with an 80-in-8 test mode.">
+  <title>Math Trainer — Limitless</title>
+  <link rel="stylesheet" href="base.css">
+  <link rel="stylesheet" href="math.css">
+  <link rel="stylesheet" href="math-theme.css">
+  <script>
+    /* set the theme before first paint so there is no flash */
+    (function () {
+      var t = null;
+      try { t = localStorage.getItem('limitless.math.v1.theme'); } catch (e) {}
+      if (t !== 'dark' && t !== 'light') {
+        t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+      document.documentElement.setAttribute('data-mood', 'adept');
+    })();
+  </script>
+</head>
+<body data-screen="menu">
+  <div class="background-art theme-bg" id="theme-bg" aria-hidden="true"></div>
+  <div class="theme-veil" aria-hidden="true"></div>
+
+  <header class="navbar">
+    <a class="brand" href="../../">Limitless</a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <button class="theme-toggle" id="theme-toggle" type="button" aria-label="Switch theme"></button>
+      <button class="nav-btn" id="nav-topic" type="button" hidden>&#8617; <span id="nav-topic-name">Current topic</span></button>
+      <button class="nav-btn" id="nav-home" type="button">Math Trainer home</button>
+      <a href="../../">&larr; Back to Limitless</a>
+    </nav>
+  </header>
+
+  <main class="math-app">
+
+    <!-- ===================== MENU ===================== -->
+    <section id="screen-menu" class="screen">
+      <div class="page-head">
+        <h1 class="page-title">Math Trainer</h1>
+        <p class="page-sub">Mental arithmetic, from Acolyte to Abyss.</p>
+      </div>
+
+      <div class="profile-strip" id="profile-strip" aria-live="polite"></div>
+
+      <div class="panel" id="coach-panel">
+        <h2 class="step-title">Your coach</h2>
+        <div id="coach"></div>
+        <div class="io-row">
+          <button class="button button-primary small" id="btn-coach-drill" type="button">Start prescribed drill</button>
+          <button class="button button-secondary small" id="btn-profile-export" type="button">Download weak-spot analysis</button>
+          <label class="button button-secondary small" for="file-profile">Upload analysis</label>
+          <input type="file" id="file-profile" accept="application/json,.json" hidden>
+        </div>
+        <p class="note" id="profile-note"></p>
+        <p class="note">Nothing is saved on the website itself. Download your weak-spot analysis after training, and upload it next time to start drilling straight away.</p>
+      </div>
+
+      <div class="panel">
+        <h2 class="step-title"><span>1</span> Choose a mode</h2>
+        <div class="chips" id="mode-chips" role="radiogroup" aria-label="Mode"></div>
+      </div>
+
+      <div class="panel" id="drill-panel" hidden>
+        <h2 class="step-title"><span>+</span> Drill focus</h2>
+        <label class="note" for="drill-focus" style="display:block;margin:0 0 10px">What should the drill practise?</label>
+        <select id="drill-focus" class="select" aria-label="Drill focus"></select>
+        <p class="note" id="drill-note"></p>
+      </div>
+
+      <div class="panel" id="diff-panel" hidden>
+        <h2 class="step-title"><span>+</span> Drill difficulty</h2>
+        <div class="chips" id="diff-chips" role="radiogroup" aria-label="Drill difficulty"></div>
+        <p class="note" id="diff-note"></p>
+      </div>
+
+      <div class="panel" id="tier-panel">
+        <h2 class="step-title"><span>2</span> Choose a tier</h2>
+        <div class="tier-grid" id="tier-chips" role="radiogroup" aria-label="Tier"></div>
+      </div>
+
+      <div class="panel" id="penalty-panel">
+        <h2 class="step-title"><span>3</span> Choose a penalty</h2>
+        <div class="chips" id="penalty-chips" role="radiogroup" aria-label="Penalty"></div>
+        <p class="note" id="penalty-note"></p>
+      </div>
+
+      <div class="panel" id="timer-panel">
+        <h2 class="step-title"><span>4</span> Question timer</h2>
+        <div class="chips" id="timer-chips" role="radiogroup" aria-label="Question timer"></div>
+      </div>
+
+      <div class="start-row start-bar">
+        <button class="button button-primary" id="btn-start" type="button">Begin</button>
+        <span class="note" id="start-note"></span>
+      </div>
+
+      <div class="panel">
+        <h2 class="step-title">Trick Chamber</h2>
+        <p class="note" style="margin:0 0 14px" id="trick-summary"></p>
+        <button class="button button-secondary small" id="btn-tricks" type="button">Enter the Trick Chamber</button>
+      </div>
+
+      <div class="panel">
+        <h2 class="step-title">Your records</h2>
+        <div id="history"></div>
+        <div class="io-row">
+          <button class="button button-secondary small" id="btn-export" type="button">Export progress</button>
+          <label class="button button-secondary small" for="file-import">Import progress</label>
+          <input type="file" id="file-import" accept="application/json,.json" hidden>
+          <span class="note" id="io-note"></span>
+        </div>
+        <p class="note">Progress is saved in this browser only. Export a backup before clearing site data.</p>
+      </div>
+    </section>
+
+    <!-- ===================== PLAY ===================== -->
+    <section id="screen-play" class="screen" hidden>
+      <div class="hud" aria-live="off">
+        <div class="hud-item"><div class="hud-label" id="hud-clock-label">Time</div><div class="hud-value" id="hud-clock">8:00</div></div>
+        <div class="hud-item"><div class="hud-label">Question</div><div class="hud-value" id="hud-progress">1 / 80</div></div>
+        <div class="hud-item"><div class="hud-label">Points</div><div class="hud-value" id="hud-points">0</div></div>
+        <div class="hud-item"><div class="hud-label">Combo</div><div class="hud-value" id="hud-combo">0</div></div>
+        <div class="hud-item" id="hud-lives-wrap" hidden><div class="hud-label">Lives</div><div class="hud-value" id="hud-lives">&#9829;&#9829;&#9829;</div></div>
+      </div>
+
+      <div class="arena">
+        <div class="qbar" id="qbar" hidden><div class="qbar-fill" id="qbar-fill"></div></div>
+        <div class="q-tag" id="q-tag"></div>
+        <div class="method" id="method"></div>
+        <div class="question" id="question" role="status" aria-live="polite">&nbsp;</div>
+        <input id="answer" class="answer" type="text" inputmode="decimal" maxlength="14" autocomplete="off"
+               autocapitalize="off" spellcheck="false" aria-label="Your answer" placeholder="Type your answer">
+        <div class="feedback" id="feedback" aria-live="polite">&nbsp;</div>
+        <p class="keys-hint"><kbd>Enter</kbd> submit &nbsp;&middot;&nbsp; <kbd>Tab</kbd> skip &nbsp;&middot;&nbsp; <kbd>Esc</kbd> end run</p>
+      </div>
+    </section>
+
+    <!-- ===================== RESULTS ===================== -->
+    <section id="screen-results" class="screen" hidden>
+      <div class="page-head">
+        <h1 class="page-title" id="res-title">Results</h1>
+        <p class="page-sub" id="res-sub"></p>
+      </div>
+
+      <div class="tiles" id="res-tiles"></div>
+      <div class="verdict" id="res-verdict"></div>
+      <div class="verdict" id="res-extra" hidden></div>
+
+      <div class="panel">
+        <h2 class="step-title">Pace</h2>
+        <div id="res-pace"></div>
+        <p class="note">Each bar is one question: gold = correct, red = wrong, grey = skipped. The dashed line is the average target time.</p>
+      </div>
+
+      <div class="panel">
+        <h2 class="step-title">By skill</h2>
+        <div class="table-wrap"><table class="skill-table" id="res-skills"></table></div>
+      </div>
+
+      <div class="panel" id="res-coach-panel">
+        <h2 class="step-title">What next</h2>
+        <div id="res-coach"></div>
+        <div class="io-row">
+          <button class="button button-primary small" id="btn-res-drill" type="button">Start this drill</button>
+          <button class="button button-secondary small" id="btn-res-profile" type="button">Download weak-spot analysis</button>
+        </div>
+      </div>
+
+      <div class="panel" id="res-mistakes-panel">
+        <h2 class="step-title">Review: mistakes and skips</h2>
+        <div id="res-mistakes"></div>
+      </div>
+
+      <div class="start-row">
+        <button class="button button-primary" id="btn-again" type="button">Play again</button>
+        <button class="button button-secondary" id="btn-menu" type="button">Menu</button>
+      </div>
+    </section>
+
+    <!-- ===================== TRICK CHAMBER ===================== -->
+    <section id="screen-tricks" class="screen" hidden>
+      <div class="page-head">
+        <h1 class="page-title">Trick Chamber</h1>
+        <p class="page-sub">Learn a shortcut, then prove it makes you faster.</p>
+      </div>
+      <div class="panel">
+        <div class="trick-grid" id="trick-list"></div>
+      </div>
+      <div class="panel" id="trick-detail" hidden></div>
+      <div class="start-row">
+        <button class="button button-secondary" id="btn-tricks-back" type="button">Back to menu</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <span>&#10023;</span>&nbsp; LIMITLESS &nbsp; &middot; &nbsp; HAIL THE LORD &nbsp;<span>&#10023;</span>
+  </footer>
+
+  <script src="math-theme.js" defer></script>
+  <script src="engine.js" defer></script>
+  <script src="storage.js" defer></script>
+  <script src="math-ui.js" defer></script>
+  <script src="math-xp.js" defer></script>
+  <script src="math-coach.js" defer></script>
+  <script src="run-state.js" defer></script>
+  <script src="game.js" defer></script>
+</body>
+</html>

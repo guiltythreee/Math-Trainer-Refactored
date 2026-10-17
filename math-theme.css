@@ -1,0 +1,122 @@
+/* Math Trainer themes. Dark = "Moonlit Order" (LotM-inspired). Light = "Sky Archive" (Ghibli/Frieren-inspired).
+   To add a theme: add a block here + an entry in THEMES in math-theme.js + a folder in themes/. */
+
+/* ---------- shared tokens (dark is the default) ---------- */
+:root {
+  --ink: #ecdca4; --ink-soft: #f0e2b4;
+  --plate: rgba(8,7,13,.72); --arena: rgba(8,7,13,.84); --chip-bg: rgba(10,8,17,.5); --input-bg: rgba(5,4,10,.7);
+  --hover-border: rgba(232,203,139,.55); --sel-bg: rgba(232,203,139,.12); --glow: rgba(232,203,139,.25);
+  --hair: rgba(232,203,139,.1); --axis: rgba(232,203,139,.25);
+  --bad: #ff9c8f; --on-gold: #171018;
+  --bar-ok: #e8cb8b; --bar-bad: #d9695f; --bar-skip: #8a8396;
+  --shadow-title: none;
+  --shadow-sub: none;
+  --bg-land: url("themes/dark/landscape.webp");
+  --bg-port: url("themes/dark/portrait.webp");
+  --glyph: #f9e6b5; --glyph-glow: rgba(232,203,139,.55);
+}
+
+/* ---------- light tokens ---------- */
+html[data-theme="light"] {
+  --gold: #8a5a12; --gold-bright: #4a2f08; --text: #2a2433; --muted: #5a4a36;
+  --panel: rgba(252,247,235,.86); --border: rgba(122,88,32,.38);
+  --ink: #3a2e22; --ink-soft: #3a2e22;
+  --plate: rgba(252,247,235,.88); --arena: rgba(252,247,235,.9); --chip-bg: rgba(255,251,240,.7); --input-bg: rgba(255,255,255,.88);
+  --hover-border: rgba(138,90,18,.7); --sel-bg: rgba(201,154,60,.2); --glow: rgba(201,154,60,.3);
+  --hair: rgba(122,88,32,.16); --axis: rgba(122,88,32,.3);
+  --bad: #b3392b; --on-gold: #fff8e6;
+  --bar-ok: #b8832a; --bar-bad: #c0443a; --bar-skip: #8d8a96;
+  --shadow-title: none; --shadow-sub: none;
+  --bg-land: url("themes/light/landscape.webp");
+  --bg-port: url("themes/light/portrait.webp");
+  --glyph: #3b3350; --glyph-glow: rgba(255,255,255,.7);
+}
+html[data-theme="light"] body { background: #dfe6ee; color: var(--text); }
+html[data-theme="light"] body::after {
+  background: linear-gradient(180deg, rgba(255,250,235,.10) 0%, rgba(255,250,235,.0) 40%, rgba(40,30,60,.18) 100%);
+}
+html[data-theme="light"] .navbar { background: rgba(252,247,235,.62); border-bottom-color: rgba(122,88,32,.25); }
+html[data-theme="light"] .brand { color: var(--gold-bright); }
+html[data-theme="light"] .brand:hover { text-shadow: 0 0 14px rgba(201,154,60,.5); }
+html[data-theme="light"] .nav-links { color: #4a3a22; }
+html[data-theme="light"] .nav-links a:hover { color: var(--gold); text-shadow: none; }
+html[data-theme="light"] .button-primary { background: linear-gradient(135deg, #cfa045, #a67a22); color: #fff8e6; }
+html[data-theme="light"] .button-primary:hover { background: #b98a2c; }
+html[data-theme="light"] .button-secondary { background: rgba(255,251,240,.75); color: var(--gold-bright); }
+html[data-theme="light"] .button:hover { box-shadow: 0 8px 24px rgba(122,88,32,.2); }
+html[data-theme="light"] footer { background: rgba(252,247,235,.78); color: #5a4a36; border-top-color: rgba(122,88,32,.25); }
+html[data-theme="light"] .tile-value, html[data-theme="light"] .hud-value, html[data-theme="light"] .question { color: var(--gold-bright); }
+html[data-theme="light"] .answer { color: var(--gold-bright); }
+html[data-theme="light"] .tier-emblem { color: var(--gold); }
+html[data-theme="light"] .history-table th, html[data-theme="light"] .skill-table th { color: var(--gold); }
+
+/* ---------- background layers ---------- */
+.theme-bg {
+  background: var(--bg-land) center center / cover no-repeat;
+  transition: filter .9s ease, opacity .25s ease;
+  animation: none; transform: none; will-change: auto;
+  background-color: #08070d;
+}
+@media (max-aspect-ratio: 4/5) { .theme-bg { background-image: var(--bg-port); } }
+html[data-theme="light"] .theme-bg { background-color: #dfe6ee; }
+.theme-bg.is-swapping { opacity: 0; }
+.theme-veil {
+  position: fixed; inset: 0; z-index: -2; pointer-events: none;
+  background: transparent; transition: background 1.2s ease, backdrop-filter .9s ease;
+}
+
+/* focus mode: while solving, the art softens so numbers stay sharp */
+body[data-screen="play"] .theme-bg { filter: blur(7px) brightness(.62) saturate(.9); }
+html[data-theme="light"] body[data-screen="play"] .theme-bg { filter: blur(8px) brightness(1.04) saturate(.85); }
+html[data-theme="light"] body[data-screen="play"] .theme-veil { background: rgba(250,244,230,.28); }
+
+/* ---------- moods by tier (menu shows the selected tier, play shows the active one) ---------- */
+html[data-theme="dark"][data-mood="magister"] .theme-veil { background: radial-gradient(ellipse at 50% 30%, rgba(90,50,170,.22), rgba(30,10,70,.26)); }
+html[data-theme="dark"][data-mood="archon"]   .theme-veil { background: radial-gradient(ellipse at 50% 30%, rgba(190,120,20,.16), rgba(90,40,0,.28)); }
+html[data-theme="dark"][data-mood="abyss"]    .theme-veil { background: radial-gradient(ellipse at 50% 35%, rgba(140,10,30,.24), rgba(30,0,10,.5)); }
+html[data-theme="dark"][data-mood="limitless"] .theme-veil { background: radial-gradient(ellipse at 50% 35%, rgba(255,255,255,.07), rgba(0,0,0,.62)); }
+html[data-theme="dark"][data-mood="acolyte"] .theme-bg { filter: brightness(1.08); }
+html[data-theme="dark"][data-mood="abyss"] .theme-bg, html[data-theme="dark"][data-mood="limitless"] .theme-bg { filter: saturate(1.2) contrast(1.05); }
+
+html[data-theme="light"][data-mood="acolyte"] .theme-veil { background: rgba(255,238,190,.14); }
+html[data-theme="light"][data-mood="adept"]   .theme-veil { background: rgba(120,170,255,.07); }
+html[data-theme="light"][data-mood="magister"] .theme-veil { background: rgba(165,120,255,.14); }
+html[data-theme="light"][data-mood="archon"]  .theme-veil { background: rgba(255,160,80,.18); }
+html[data-theme="light"][data-mood="abyss"]   .theme-veil { background: linear-gradient(180deg, rgba(60,50,120,.3), rgba(25,20,70,.42)); }
+html[data-theme="light"][data-mood="limitless"] .theme-veil { background: linear-gradient(180deg, rgba(25,15,70,.5), rgba(10,5,40,.58)); }
+html[data-theme="light"][data-mood="abyss"] .theme-bg, html[data-theme="light"][data-mood="limitless"] .theme-bg { filter: saturate(.75) brightness(.78); }
+
+/* ---------- theme toggle ---------- */
+.theme-toggle {
+  font-family: Arial, sans-serif; font-size: 12px; letter-spacing: 1px; cursor: pointer;
+  padding: 8px 14px; color: var(--gold-bright); background: var(--chip-bg);
+  border: 1px solid var(--border); border-radius: 3px; white-space: nowrap;
+  transition: border-color .2s ease, transform .2s ease;
+}
+.theme-toggle:hover { border-color: var(--gold); transform: translateY(-2px); }
+.theme-toggle:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 2px; }
+.nav-links { gap: 18px; }
+
+/* ---------- nav buttons: "Math Trainer home" and "back to current topic" ---------- */
+.nav-links { flex-wrap: wrap; justify-content: flex-end; }
+.nav-btn {
+  font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer;
+  transition: color .2s ease, text-shadow .2s ease;
+}
+.nav-btn:hover { color: var(--gold-bright); text-shadow: 0 0 12px rgba(249,230,181,.4); }
+html[data-theme="light"] .nav-btn:hover { color: var(--gold); text-shadow: none; }
+.nav-btn:focus-visible { outline: 2px solid var(--gold-bright); outline-offset: 3px; }
+#nav-topic { max-width: 210px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+body[data-screen="menu"] #nav-home { display: none; }   /* already home */
+/* ---------- Begin bar: always visible at the bottom of the menu, no scrolling to start ---------- */
+.start-bar {
+  position: sticky; bottom: 0; z-index: 5; margin: 4px 0 0; padding: 14px 12px;
+  background: rgba(8,7,13,.82); backdrop-filter: blur(10px);
+  border-top: 1px solid var(--border);
+}
+html[data-theme="light"] .start-bar { background: rgba(252,247,235,.9); }
+.start-bar + .panel { margin-top: 16px; }
+@media (max-width: 640px) {
+  .navbar { flex-wrap: wrap; row-gap: 10px; }
+  .nav-links { width: 100%; justify-content: flex-start; }
+}
